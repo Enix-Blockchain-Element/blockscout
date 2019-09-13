@@ -152,6 +152,22 @@ config :explorer, :double_token_transfers,
   first_block_number: double_token_transfers_start,
   last_block_number: double_token_transfers_end
 
+internal_transactions_wrong_number_start =
+  case Integer.parse(System.get_env("INTERNAL_TRANSACTIONS_WRONG_NUMBER_START", "")) do
+    {number, ""} -> number
+    _ -> nil
+  end
+
+internal_transactions_wrong_number_end =
+  case Integer.parse(System.get_env("INTERNAL_TRANSACTIONS_WRONG_NUMBER_END", "")) do
+    {number, ""} -> number
+    _ -> nil
+  end
+
+config :explorer, :internal_transactions_block_number,
+  first_block_number: internal_transactions_wrong_number_start,
+  last_block_number: internal_transactions_wrong_number_end
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

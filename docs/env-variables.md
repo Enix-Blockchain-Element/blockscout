@@ -70,3 +70,5 @@ $ export NETWORK=POA
 | `REWARDS_CONTRACT_ADDRESS` | | Emission rewards contract address. This env var is used only if `EMISSION_FORMAT` is set to `POA` | `0xeca443e8e1ab29971a45a9c57a6a9875701698a5` | v2.0.4+ | | |
 | `DOUBLE_TOKEN_TRANSFERS_START` | | The smallest block number that the `:double_token_transfers` refetcher has to check (exclusive). If `nil` it will start from the beginning. | `nil` | v2.0.4+ | | |
 | `DOUBLE_TOKEN_TRANSFERS_END` | | The biggest block number that the `:double_token_transfers` refetcher has to check (inclusive). If `nil` it will use the current last number | `nil` | v2.0.4+ | | |
+| `INTERNAL_TRANSACTIONS_WRONG_NUMBER_START` | | The smallest block number that the `:internal_transactions_block_number` refetcher has to check (exclusive). If `nil` it will start from the beginning. | `nil` | v2.0.4+ | | |
+| `INTERNAL_TRANSACTIONS_WRONG_NUMBER_END` | | The biggest block number that the `:internal_transactions_block_number` refetcher has to check (inclusive). If `nil` it will use the current last number | `nil` | v2.0.4+ | | |

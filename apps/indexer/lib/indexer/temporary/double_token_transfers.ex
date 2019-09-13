@@ -42,7 +42,7 @@ defmodule Indexer.Temporary.DoubleTokenTransfers do
 
   @impl BufferedTask
   def init(initial, reducer, _) do
-    %{first_block_number: first, last_block_number: last} = get_starting_numbers()
+    %{first_block_number: first, last_block_number: last} = BlockRefetcher.get_starting_numbers(Repo, @fetcher_name)
 
     if BlockRefetcher.no_work_left(first, last) do
       {0, []}
@@ -168,13 +168,7 @@ defmodule Indexer.Temporary.DoubleTokenTransfers do
         end
       end)
       |> Multi.run(:update_refetcher_status, fn repo, _ ->
-        @fetcher_name
-        |> BlockRefetcher.fetch()
-        |> repo.one!()
-        |> BlockRefetcher.with_last(number)
-        |> repo.update!()
-
-        {:ok, number}
+        BlockRefetcher.update_refetcher_last_number(repo, @fetcher_name, number)
       end)
 
     try do
@@ -192,21 +186,6 @@ defmodule Indexer.Temporary.DoubleTokenTransfers do
       postgrex_error in Postgrex.Error ->
         Logger.error(fn -> ["Error while handling double token transfers", inspect(postgrex_error)] end)
         {:retry, [number]}
-    end
-  end
-
-  defp get_starting_numbers do
-    @fetcher_name
-    |> BlockRefetcher.fetch()
-    |> Repo.one()
-    |> case do
-      nil ->
-        @fetcher_name
-        |> BlockRefetcher.make_from_env()
-        |> Repo.insert!()
-
-      value ->
-        value
     end
   end
 

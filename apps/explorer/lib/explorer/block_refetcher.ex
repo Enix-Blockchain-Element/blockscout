@@ -64,6 +64,51 @@ defmodule Explorer.BlockRefetcher do
   end
 
   @doc """
+  Fetches the status from the repo and if there is none it gets the values from
+  the environment variables and stores them as well.
+  """
+  def get_starting_numbers(repo, fetcher_name) do
+    fetcher_name
+    |> fetch()
+    |> repo.one()
+    |> case do
+      nil ->
+        fetcher_name
+        |> make_from_env()
+        |> repo.insert!()
+
+      value ->
+        value
+    end
+  end
+
+  @doc """
+  Updates the status in the repo with the new last_block_number
+  """
+  def update_refetcher_last_number(repo, fetcher_name, number) do
+    fetcher_name
+    |> fetch()
+    |> repo.one!()
+    |> with_last(number)
+    |> repo.update!()
+
+    {:ok, number}
+  end
+
+  @doc """
+  Updates the status in the repo with the new first_block_number
+  """
+  def update_refetcher_first_number(repo, fetcher_name, number) do
+    fetcher_name
+    |> fetch()
+    |> repo.one!()
+    |> with_first(number)
+    |> repo.update!()
+
+    {:ok, number}
+  end
+
+  @doc """
   Returns a changeset with `:first_block_number` set as chosen
   """
   def with_first(%__MODULE__{} = block_refetcher, block_number) do
