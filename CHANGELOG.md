@@ -1,6 +1,7 @@
 ## Current
 
 ### Features
+- [#2697](https://github.com/poanetwork/blockscout/pull/2697) - Add temporary indexer to trigger refetching of blocks where internal transactions number doesn't match
 - [#2695](https://github.com/poanetwork/blockscout/pull/2695) - Add temporary indexer to trigger refetching of blocks with duplicated token transfers
 - [#2679](https://github.com/poanetwork/blockscout/pull/2679) - added fixed height for card chain blocks and card chain transactions
 - [#2678](https://github.com/poanetwork/blockscout/pull/2678) - fixed dashboard banner height bug
