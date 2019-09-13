@@ -68,5 +68,5 @@ $ export NETWORK=POA
 | `COIN_GECKO_ID` | | CoinGecko coin id required for fetching an exchange rate | poa-network | v2.0.4+ | | master |
 | `EMISSION_FORMAT` | | Should be set to `POA` if you have block emission indentical to POA Network. This env var is used only if `CHAIN_SPEC_PATH` is set | `STANDARD` | v2.0.4+ | | |
 | `REWARDS_CONTRACT_ADDRESS` | | Emission rewards contract address. This env var is used only if `EMISSION_FORMAT` is set to `POA` | `0xeca443e8e1ab29971a45a9c57a6a9875701698a5` | v2.0.4+ | | |
-| `DOUBLE_TOKEN_TRANSFERS_START` | | The block number that the `:double_token_transfers` refercher has to start checking from (exclusive). If `nil` it will start from the beginning. | `nil` | v2.0.4+ | | |
-| `DOUBLE_TOKEN_TRANSFERS_END` | | The block number that the `:double_token_transfers` refercher has to stop checking to (inclusive). If `nil` it will never stop | `nil` | v2.0.4+ | | |
+| `DOUBLE_TOKEN_TRANSFERS_START` | | The smallest block number that the `:double_token_transfers` refetcher has to check (exclusive). If `nil` it will start from the beginning. | `nil` | v2.0.4+ | | |
+| `DOUBLE_TOKEN_TRANSFERS_END` | | The biggest block number that the `:double_token_transfers` refetcher has to check (inclusive). If `nil` it will use the current last number | `nil` | v2.0.4+ | | |
