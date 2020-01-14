@@ -1,10 +1,4 @@
-<p align="center">
-  <a href="https://blockscout.com">
-    <img width="200" src="https://blockscout.com/poa/core/android-chrome-192x192.png" \>
-  </a>
-</p>
-
-<h1 align="center">BlockScout</h1>
+<h1 align="center">Enix Explorer</h1>
 <p align="center">Blockchain Explorer for inspecting and analyzing EVM Chains.</p>
 <div align="center">
 
