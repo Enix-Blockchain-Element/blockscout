@@ -122,7 +122,7 @@ defmodule BlockScoutWeb.LayoutView do
           nil
 
         release_link_env_var == "" || release_link_env_var == nil ->
-          "https://github.com/poanetwork/blockscout/releases/tag/" <> version
+          "https://github.com/Enix-Blockchain-Element/blockscout" <> version
 
         true ->
           release_link_env_var

@@ -9,21 +9,21 @@ use Mix.Config
 config :block_scout_web,
   namespace: BlockScoutWeb,
   ecto_repos: [Explorer.Repo],
-  version: System.get_env("BLOCKSCOUT_VERSION"),
+  version: "V1.0.0 - ENIX",
   release_link: System.get_env("RELEASE_LINK"),
   decompiled_smart_contract_token: System.get_env("DECOMPILED_SMART_CONTRACT_TOKEN"),
   show_percentage: if(System.get_env("SHOW_ADDRESS_MARKETCAP_PERCENTAGE", "true") == "false", do: false, else: true)
 
 config :block_scout_web, BlockScoutWeb.Chain,
   network: System.get_env("NETWORK"),
-  subnetwork: System.get_env("SUBNETWORK"),
+  subnetwork: "ENIX",
   network_icon: System.get_env("NETWORK_ICON"),
   logo: System.get_env("LOGO"),
   logo_footer: System.get_env("LOGO_FOOTER"),
   has_emission_funds: false
 
 config :block_scout_web,
-  link_to_other_explorers: System.get_env("LINK_TO_OTHER_EXPLORERS") == "true",
+  link_to_other_explorers: System.get_env("LINK_TO_OTHER_EXPLORERS") == "false",
   other_explorers: %{
     "Etherscan" => "https://etherscan.io/",
     "EtherChain" => "https://www.etherchain.org/",

@@ -8,7 +8,7 @@ use Mix.Config
 # General application configuration
 config :explorer,
   ecto_repos: [Explorer.Repo],
-  coin: System.get_env("COIN") || "POA",
+  coin: System.get_env("COIN") || "ETH",
   token_functions_reader_max_retries: 3,
   allowed_evm_versions:
     System.get_env("ALLOWED_EVM_VERSIONS") ||
@@ -43,7 +43,7 @@ config :explorer, Explorer.Chain.Events.Listener,
 
 config :explorer, Explorer.ChainSpec.GenesisData,
   enabled: true,
-  chain_spec_path: System.get_env("CHAIN_SPEC_PATH"),
+  chain_spec_path: "apps/explorer/test/support/fixture/chain_spec/foundation.json",
   emission_format: System.get_env("EMISSION_FORMAT", "DEFAULT"),
   rewards_contract_address: System.get_env("REWARDS_CONTRACT_ADDRESS", "0xeca443e8e1ab29971a45a9c57a6a9875701698a5")
 
