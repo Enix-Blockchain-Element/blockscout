@@ -1,5 +1,5 @@
 <link rel="preload" href="<%= static_path(@conn, "/css/awesomplete.css") %>" as="style" onload="this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="<%= static_path(@conn, "/css/awesomplete.css") %>"></noscript>
+<link rel="stylesheet" href="<%= static_path(@conn, "/css/awesomplete.css") %>">
 <script src="<%= static_path(@conn, "/js/awesomplete.min.js") %>"></script>
 <script src="<%= static_path(@conn, "/js/awesomplete-util.min.js") %>"></script>
 <nav class="navbar navbar-dark navbar-expand-lg navbar-primary" data-selector="navbar" id="top-navbar">
@@ -55,12 +55,16 @@
                     class: "dropdown-item #{tab_status("txs", @conn.request_path)}",
                     to: transaction_path(@conn, :index)
                   ) %>
-              <%= link(
-                    gettext("Pending"),
-                    class: "dropdown-item #{tab_status("pending_transactions", @conn.request_path)}",
-                    "data-test": "pending_transactions_link",
-                    to: pending_transaction_path(@conn, :index)
-                  ) %>
+              <% json_rpc_named_arguments = Application.fetch_env!(:indexer, :json_rpc_named_arguments)%>
+              <% variant = Keyword.fetch!(json_rpc_named_arguments, :variant) %>
+              <%= if variant !== EthereumJSONRPC.Besu do %>
+                <%= link(
+                      gettext("Pending"),
+                      class: "dropdown-item #{tab_status("pending_transactions", @conn.request_path)}",
+                      "data-test": "pending_transactions_link",
+                      to: pending_transaction_path(@conn, :index)
+                    ) %>
+              <% end %>
             </div>
           </li>
           <li class="nav-item">

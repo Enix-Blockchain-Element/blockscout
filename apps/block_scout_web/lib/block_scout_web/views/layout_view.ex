@@ -17,12 +17,7 @@ defmodule BlockScoutWeb.LayoutView do
     },
     %{
       title: "xDai Chain",
-      url: "https://blockscout.com/poa/dai"
-    },
-    %{
-      title: "Kovan Testnet",
-      url: "https://blockscout.com/eth/kovan",
-      test_net?: true
+      url: "https://blockscout.com/poa/xdai"
     },
     %{
       title: "Ethereum Classic",
@@ -38,10 +33,6 @@ defmodule BlockScoutWeb.LayoutView do
 
   alias BlockScoutWeb.SocialMedia
 
-  def network_icon_partial do
-    Keyword.get(application_config(), :network_icon) || "_network_icon.html"
-  end
-
   def logo do
     Keyword.get(application_config(), :logo) || "/images/enix.png"
   end
@@ -52,7 +43,7 @@ defmodule BlockScoutWeb.LayoutView do
   end
 
   def subnetwork_title do
-    Keyword.get(application_config(), :subnetwork) || ""
+    Keyword.get(application_config(), :subnetwork) || "POA Sokol"
   end
 
   def network_title do
@@ -141,9 +132,14 @@ defmodule BlockScoutWeb.LayoutView do
   def other_networks do
     get_other_networks =
       if Application.get_env(:block_scout_web, :other_networks) do
-        :block_scout_web
-        |> Application.get_env(:other_networks)
-        |> Parser.parse!(%{keys: :atoms!})
+        try do
+          :block_scout_web
+          |> Application.get_env(:other_networks)
+          |> Parser.parse!(%{keys: :atoms!})
+        rescue
+          _ ->
+            []
+        end
       else
         @default_other_networks
       end
@@ -217,6 +213,21 @@ defmodule BlockScoutWeb.LayoutView do
     |> case do
       :error -> ""
       {:ok, url} -> url
+    end
+  end
+
+  def external_apps_list do
+    if Application.get_env(:block_scout_web, :external_apps) do
+      try do
+        :block_scout_web
+        |> Application.get_env(:external_apps)
+        |> Parser.parse!(%{keys: :atoms!})
+      rescue
+        _ ->
+          []
+      end
+    else
+      []
     end
   end
 

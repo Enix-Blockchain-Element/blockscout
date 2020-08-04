@@ -8,6 +8,7 @@ defmodule BlockScoutWeb.AddressView do
   alias Explorer.Chain.{Address, Hash, InternalTransaction, SmartContract, Token, TokenTransfer, Transaction, Wei}
   alias Explorer.Chain.Block.Reward
   alias Explorer.ExchangeRates.Token, as: TokenExchangeRate
+  alias Explorer.SmartContract.Writer
 
   @dialyzer :no_match
 
@@ -18,6 +19,9 @@ defmodule BlockScoutWeb.AddressView do
     "internal_transactions",
     "token_transfers",
     "read_contract",
+    "read_proxy",
+    "write_contract",
+    "write_proxy",
     "tokens",
     "transactions",
     "validations"
@@ -110,20 +114,37 @@ defmodule BlockScoutWeb.AddressView do
     format_wei_value(balance, :ether)
   end
 
-  def balance_percentage_enabled? do
-    Application.get_env(:block_scout_web, :show_percentage)
+  def balance_percentage_enabled?(total_supply) do
+    Application.get_env(:block_scout_web, :show_percentage) && total_supply > 0
   end
 
   def balance_percentage(_, nil), do: ""
 
+  def balance_percentage(
+        %Address{
+          hash: %Explorer.Chain.Hash{
+            byte_count: 20,
+            bytes: <<0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0>>
+          }
+        },
+        _
+      ),
+      do: ""
+
   def balance_percentage(%Address{fetched_coin_balance: balance}, total_supply) do
-    balance
-    |> Wei.to(:ether)
-    |> Decimal.div(Decimal.new(total_supply))
-    |> Decimal.mult(100)
-    |> Decimal.round(4)
-    |> Decimal.to_string(:normal)
-    |> Kernel.<>("% #{gettext("Market Cap")}")
+    if total_supply > 0 do
+      balance
+      |> Wei.to(:ether)
+      |> Decimal.div(Decimal.new(total_supply))
+      |> Decimal.mult(100)
+      |> Decimal.round(4)
+      |> Decimal.to_string(:normal)
+      |> Kernel.<>("% #{gettext("Market Cap")}")
+    else
+      balance
+      |> Wei.to(:ether)
+      |> Decimal.to_string(:normal)
+    end
   end
 
   def empty_exchange_rate?(exchange_rate) do
@@ -206,10 +227,25 @@ defmodule BlockScoutWeb.AddressView do
   def smart_contract_verified?(%Address{smart_contract: nil}), do: false
 
   def smart_contract_with_read_only_functions?(%Address{smart_contract: %SmartContract{}} = address) do
-    Enum.any?(address.smart_contract.abi, & &1["constant"])
+    Enum.any?(address.smart_contract.abi, &(&1["constant"] || &1["stateMutability"] == "view"))
   end
 
   def smart_contract_with_read_only_functions?(%Address{smart_contract: nil}), do: false
+
+  def smart_contract_is_proxy?(%Address{smart_contract: %SmartContract{}} = address) do
+    Chain.is_proxy_contract?(address.smart_contract.abi)
+  end
+
+  def smart_contract_is_proxy?(%Address{smart_contract: nil}), do: false
+
+  def smart_contract_with_write_functions?(%Address{smart_contract: %SmartContract{}} = address) do
+    Enum.any?(
+      address.smart_contract.abi,
+      &Writer.write_function?(&1)
+    )
+  end
+
+  def smart_contract_with_write_functions?(%Address{smart_contract: nil}), do: false
 
   def has_decompiled_code?(address) do
     address.has_decompiled_code? ||
@@ -309,6 +345,9 @@ defmodule BlockScoutWeb.AddressView do
   defp tab_name(["contracts"]), do: gettext("Code")
   defp tab_name(["decompiled_contracts"]), do: gettext("Decompiled Code")
   defp tab_name(["read_contract"]), do: gettext("Read Contract")
+  defp tab_name(["read_proxy"]), do: gettext("Read Proxy")
+  defp tab_name(["write_contract"]), do: gettext("Write Contract")
+  defp tab_name(["write_proxy"]), do: gettext("Write Proxy")
   defp tab_name(["coin_balances"]), do: gettext("Coin Balance History")
   defp tab_name(["validations"]), do: gettext("Blocks Validated")
   defp tab_name(["logs"]), do: gettext("Logs")
@@ -321,6 +360,14 @@ defmodule BlockScoutWeb.AddressView do
     >> = to_string(hash)
 
     "0x" <> short_address
+  end
+
+  def short_contract_name(name, max_length) do
+    part_length = Kernel.trunc(max_length / 4)
+
+    if String.length(name) <= max_length,
+      do: name,
+      else: "#{String.slice(name, 0, max_length - part_length)}..#{String.slice(name, -part_length, part_length)}"
   end
 
   def address_page_title(address) do
